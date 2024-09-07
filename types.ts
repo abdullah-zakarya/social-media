@@ -1,5 +1,6 @@
 // 1) user
-interface User {
+export interface User {
+  userID: string;
   userName: string;
   passWord: string;
   email: string;
@@ -8,27 +9,27 @@ interface User {
   name: string;
 }
 // 2) flows
-interface Follow {
-  follower: string;
-  followee: string;
+export interface Follow {
+  followerID: string;
+  followeeID: string;
 }
 // 3) posts
-interface Post {
-  id: string;
+export interface Post {
+  postID: string;
   createdAt: number;
   likeCount: number;
   commentCount: number;
-  user: string;
+  userID: string;
   text: string;
 }
 // 4) comments
-interface Comment {
-  id: string;
-  user: string;
-  post: string;
+export interface Comment {
+  commentID: string;
+  userID: string;
+  postID: string;
 }
 // 5) like
-interface Like {
-  user: string;
-  post: string;
+export interface Like {
+  userID: string;
+  postID: string;
 }
