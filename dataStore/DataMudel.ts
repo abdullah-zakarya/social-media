@@ -1,11 +1,11 @@
-import IComment from "./Icomment";
-import IFollow from "./Ifollow";
-import ILike from "./Ilike";
-import IPost from "./Ipost";
-import IUser from "./Iuser";
+import IComment from "./IComment";
+import IFollow from "./IFollow";
+import ILike from "./ILike";
+import IPost from "./IPost";
+import IUser from "./IUser";
 export default interface DataModel
-  extends IComment,
+  extends IUser,
+    IFollow,
     IPost,
-    ILike,
-    IUser,
-    IFollow {}
+    IComment,
+    ILike {}

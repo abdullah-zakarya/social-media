@@ -1,7 +1,7 @@
 import { Post } from "../types";
 export default interface IPost {
-  createPost(post: Post): Post | undefined;
-  getPost(id: string): Post | undefined;
-  deletePost(id: string): Post | undefined;
-  updatePost(id: string): Post | undefined;
+  createPost(post: Post): Promise<Post | undefined>;
+  getPost(id: string): Promise<Post | undefined>;
+  deletePost(id: string): Promise<void>;
+  updatePost(id: string, post: Post): Promise<Post | undefined>;
 }

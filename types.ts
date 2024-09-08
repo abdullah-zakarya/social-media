@@ -1,6 +1,6 @@
 // 1) user
 export interface User {
-  userID: string;
+  userID: number;
   userName: string;
   passWord: string;
   email: string;
@@ -10,26 +10,26 @@ export interface User {
 }
 // 2) flows
 export interface Follow {
-  followerID: string;
-  followeeID: string;
+  followerID: number;
+  followeeID: number;
 }
 // 3) posts
 export interface Post {
-  postID: string;
+  postID: number;
   createdAt: number;
   likeCount: number;
   commentCount: number;
-  userID: string;
+  userID: number;
   text: string;
 }
 // 4) comments
 export interface Comment {
-  commentID: string;
-  userID: string;
-  postID: string;
+  commentID: number;
+  userID: number;
+  postID: number;
 }
 // 5) like
 export interface Like {
-  userID: string;
-  postID: string;
+  userID: number;
+  postID: number;
 }

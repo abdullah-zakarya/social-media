@@ -1,5 +1,5 @@
 import { Like } from "../types";
 export default interface ILike {
-  createLike(like: Like): Like | undefined;
-  deleteLike(like: Like): Like | undefined;
+  createLike(like: Like): Promise<Like | undefined>;
+  deleteLike(postId: string, userId: string): Promise<void>;
 }

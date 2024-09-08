@@ -12,30 +12,14 @@ const main = async (): Promise<void> => {
 };
 main();
 
-// (async () => {
-//   try {
-//     await client.connect();
-//     console.log("Connected to PostgreSQL database");
+const testing = async () => {
+  const values: string[] = ["sami", "sami@gmail.com", "sami samoaa"];
+  const query = "INSERT INTO users(name, password, email) VALUES($1, $2, $3)";
+  const user = await client.query(query, values);
+  console.log(user);
 
-//     // تنفيذ استعلام
-//     const result = await client.query("SELECT NOW()");
-//     console.log("Current time:", result.rows[0].now);
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       // التعامل مع الخطأ ككائن Error
-//       console.error("Error connecting to the database", error.stack);
-//     } else {
-//       // التعامل مع الأخطاء الأخرى
-//       console.error("An unexpected error occurred", error);
-//     }
-//   } finally {
-//     // إنهاء الاتصال
-//     await client.end();
-//   }
-// })();
+  const users = await client.query("SELECT * FROM users");
+  console.log("\n\n\n\n\n", users.rows);
+};
 
-// async function getStudent() {
-//   const student = await client.query("SElECT * from student");
-//   console.log(student);
-// }
-// getStudent();
+testing();
