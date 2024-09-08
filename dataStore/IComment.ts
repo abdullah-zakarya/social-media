@@ -1,8 +1,8 @@
 import { Comment } from "../types";
 export default interface IComment {
-  createComment(post: Comment): Promise<Comment | undefined>;
-  getComment(id: string): Promise<Comment | undefined>;
-  listComments(PosId: string): Promise<Comment[]>;
-  deleteComment(id: string): Promise<void>;
-  updateComment(id: string, comment: Comment): Promise<Comment | undefined>;
+  createComment(comment: Comment): Promise<Comment | undefined>;
+  getComment(id: number): Promise<Comment | undefined>;
+  listComments(PosId: number): Promise<Comment[]>;
+  deleteComment(id: number): Promise<void>;
+  updateComment(id: number, comment: object): Promise<Comment | undefined>;
 }

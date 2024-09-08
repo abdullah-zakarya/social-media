@@ -1,29 +1,41 @@
 import { Comment, Post, Like, User, Follow } from "../../types";
 import DataModel from "../DataMudel";
-import { Pool } from "pg";
+import { Client, Pool } from "pg";
+import dotenv from "dotenv";
+dotenv.config();
 
 class pgDataBase {
   private static instance: Pool | null = null;
 
   public static getInstance(): Pool {
-    if (!this.instance) this.instance = new Pool();
+    if (!this.instance) this.instance = new Pool({});
+
     return this.instance;
+  }
+  public static connect() {
+    this.instance?.connect;
   }
 }
 
+pgDataBase.connect();
 class Database implements DataModel {
   pool: Pool;
 
   constructor() {
-    this.pool = pgDataBase.getInstance(); // استخدم Singleton بدلًا من new Pool()
+    this.pool = pgDataBase.getInstance();
   }
-
+  connet() {
+    this.pool.connect();
+  }
+  async end() {
+    this.pool.end();
+  }
   // ================== User Methods ==================
   async createUser(user: User): Promise<User | undefined> {
     return await this.insertFactor(user, "user");
   }
 
-  async getUserById(id: string): Promise<User | undefined> {
+  async getUserById(id: number): Promise<User | undefined> {
     const query = `SELECT * FROM users WHERE userID = $1`;
     const result = await this.pool.query(query, [id]);
     return result.rows[0];
@@ -42,11 +54,11 @@ class Database implements DataModel {
   }
 
   async deleteUser(id: number): Promise<void> {
-    return await this.deleteFactor(id, "user");
+    await this.deleteFactor(id, "user");
   }
 
-  async updateUser(id: number, user: User): Promise<User | undefined> {
-    return await this.updateFactor(id, "user", user); 
+  async updateUser(id: number, user: object): Promise<User | undefined> {
+    return await this.updateFactor(id, "user", user)!;
   }
 
   // ================== Follow Methods ==================
@@ -54,25 +66,34 @@ class Database implements DataModel {
     return await this.insertFactor(follow, "follow");
   }
 
-  async deleteFollow(followeenumber number, followerID: number): Promise<void> {
+  async deleteFollow(followeeId: number, followerId: number): Promise<void> {
     await this.pool.query(
       `DELETE FROM follows WHERE followeeID = $1 AND followerID = $2`,
-      [followeeID, followerID]
+      [followeeId, followerId]
     );
   }
 
-  async listFollower(followeeID: string): Promise<User[]> {
-    const query = `SELECT * FROM follows WHERE followeeID = $1`;
+  async listFollower(followeeID: number): Promise<User[]> {
+    const query = `
+        SELECT u.* 
+        FROM users u
+        JOIN (SELECT followerID FROM follows WHERE followeeID = $1) f
+        ON u.userID = f.followerID
+      `;
     const result = await this.pool.query(query, [followeeID]);
-    return result.rows;
+    return result.rows.length > 0 ? result.rows : [];
   }
 
   async listFollowee(followerID: number): Promise<User[]> {
-    const query = `SELECT * FROM follows WHERE followerID = $1`;
+    const query = `
+        SELECT u.* 
+        FROM users u
+        JOIN (SELECT followeeID FROM follows WHERE followerID = $1) f
+        ON u.userID = f.followeeID
+      `;
     const result = await this.pool.query(query, [followerID]);
-    return result.rows;
+    return result.rows.length > 0 ? result.rows : [];
   }
-
   // ================== Post Methods ==================
   async createPost(post: Post): Promise<Post | undefined> {
     return await this.insertFactor(post, "post");
@@ -88,8 +109,8 @@ class Database implements DataModel {
     return await this.deleteFactor(id, "post");
   }
 
-  async updatePost(id: string, post: Post): Promise<Post | undefined> {
-    return await this.updateFactor(id, "post", post); 
+  async updatePost(id: number, post: object): Promise<Post | undefined> {
+    return await this.updateFactor(id, "post", post);
   }
 
   // ================== Comment Methods ==================
@@ -114,10 +135,10 @@ class Database implements DataModel {
   }
 
   async updateComment(
-    id: string,
-    comment: Comment
+    id: number,
+    comment: object
   ): Promise<Comment | undefined> {
-    return await this.updateFactor(id, "comment", comment); 
+    return await this.updateFactor(id, "comment", comment);
   }
 
   // ================== Like Methods ==================
@@ -138,12 +159,20 @@ class Database implements DataModel {
     const values = Object.values(obj);
     const symbols = values.map((_, i) => `$${i + 1}`).join(", ");
     const query = `INSERT INTO ${table}s (${keys}) VALUES (${symbols}) RETURNING *`;
-    const result = await this.pool.query(query, values);
-    return result.rows[0];
+
+    try {
+      console.log(query);
+      const result = await this.pool.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error executing query:", error);
+      throw error;
+    }
   }
 
   private async deleteFactor(id: number, table: string): Promise<void> {
     const query = `DELETE FROM ${table}s WHERE ${table}ID = $1`;
+    console.log(query, id);
     await this.pool.query(query, [id]);
   }
 
@@ -166,5 +195,3 @@ class Database implements DataModel {
 }
 
 export default Database;
-
-// export default database;

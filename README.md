@@ -1,8 +1,8 @@
 -- A simple social media platform
 
-`<h1`Datebase query `</h1>`
+<h1>Datebase query </h1>
 
-`<h2>`1 )) create users table `</h2>`
+<h2> 1 ) create users table </h2>
 
 ```pgsql
 CREATE TABLE users (
@@ -15,7 +15,7 @@ createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 name VARCHAR(100) NOT NULL );
 ```
 
-`<h2>` 2 ) "create follows table" `</h2>`
+<h2> 2 ) "create follows table" </h2>
 
 ```pgsql
 CREATE TABLE follows ( followerID VARCHAR(50),
@@ -24,7 +24,7 @@ FOREIGN KEY (followerID) REFERENCES users(userID) ON DELETE CASCADE,
 FOREIGN KEY (followeeID) REFERENCES users(userID) ON DELETE CASCADE );
 ```
 
-`<h2>` 3 ) create posts table `</h2>`
+<h2> 3 ) create posts table </h2>
 
 ```pgsql
 CREATE TABLE posts (
@@ -35,7 +35,7 @@ userID VARCHAR(50) NOT NULL, text TEXT NOT NULL,
 FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE );
 ```
 
-`<h2>` 4 ) create comments table `</h2>`
+<h2> 4 ) create comments table </h2>
 
 ```pgsql
 CREATE TABLE comments (
@@ -46,7 +46,7 @@ FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE,
 FOREIGN KEY (postID) REFERENCES posts(postID) ON DELETE CASCADE );
 ```
 
-`<h2>` 5) create likes table `</h2>`
+<h2> 5) create likes table </h2>
 
 ```pgsql
 CREATE TABLE likes ( userID VARCHAR(50),

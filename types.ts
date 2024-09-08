@@ -1,8 +1,8 @@
 // 1) user
 export interface User {
-  userID: number;
+  userID?: number;
   userName: string;
-  passWord: string;
+  password: string;
   email: string;
   bio: string;
   photo: string;
@@ -15,7 +15,7 @@ export interface Follow {
 }
 // 3) posts
 export interface Post {
-  postID: number;
+  postID?: number;
   createdAt: number;
   likeCount: number;
   commentCount: number;
@@ -24,7 +24,7 @@ export interface Post {
 }
 // 4) comments
 export interface Comment {
-  commentID: number;
+  commentID?: number;
   userID: number;
   postID: number;
 }
