@@ -99,7 +99,7 @@ class Database implements DataModel {
     return await this.insertFactor(post, "post");
   }
 
-  async getPost(id: string): Promise<Post | undefined> {
+  async getPost(id: number): Promise<Post | undefined> {
     const query = `SELECT * FROM posts WHERE postID = $1`;
     const result = await this.pool.query(query, [id]);
     return result.rows[0];

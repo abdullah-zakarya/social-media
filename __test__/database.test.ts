@@ -1,4 +1,3 @@
-// import { User, Follow, Post, Comment, Like } from './'
 import dotenv from "dotenv";
 import Database from "../dataStore/Postgers";
 import { User, Follow, Post, Comment, Like } from "../types";
@@ -80,29 +79,6 @@ describe("Database User Operations", () => {
   });
 });
 
-// === follow type = ===
-// export interface Follow {
-//   followerid: number;
-//   followeeid: number;
-// }
-
-// ======= follow opration =====
-
-// export default interface IFollow {
-//   createFollow(user: Follow): Promise<Follow | undefined>;
-//   deleteFollow(followeeID: number, followerID: number): Promise<void>;
-//   listFollower(followeeID: number): Promise<User[]>;
-//   listFollowee(followerID: number): Promise<User[]>;
-// }
-
-// ========= database
-// CREATE TABLE follows (
-// 	followerID INT,
-// 	followeeID INT,
-// 	PRIMARY KEY (followerID, followeeID),
-// 	FOREIGN KEY (followerID) REFERENCES users(userID) ON DELETE CASCADE,
-// 	FOREIGN KEY (followeeID) REFERENCES users(userID) ON DELETE CASCADE );
-
 describe("follow opration", () => {
   let user1: User | undefined;
   let user2: User | undefined;
@@ -177,5 +153,67 @@ describe("follow opration", () => {
   });
   afterAll(() => {
     db.deleteUser(user3?.userid!);
+  });
+});
+
+describe("Postsopration", () => {
+  let post: Post | undefined;
+  let user: User | undefined;
+  let postCountent: string = "Hello, post";
+
+  // ==== initlize ======
+  it("initlize", async () => {
+    // 1) create user
+    user = await db.createUser({
+      username: "user",
+      email: "user@example.com",
+      password: "password",
+      name: "user",
+    });
+  });
+
+  //====== create =========
+  // 1 ) create right post
+  it("should allow us to create post", async () => {
+    post = await db.createPost({ userid: user?.userid!, text: postCountent });
+    expect(post).toBeDefined();
+    expect(post?.text).toBe(postCountent);
+  });
+  // 2 ) create post with fake user
+  it("should not allow  us create post with fake user", async () => {
+    expect(db.createPost({ userid: -1, text: "fake" })).rejects.toThrow();
+  });
+  // find
+  it("should allow us to find the post", async () => {
+    const findedPost = await db.getPost(post?.postid!);
+    expect(findedPost).toStrictEqual(post);
+  });
+  // update
+  // 1 ) update information
+  it("should allow us to update the information", async () => {
+    const updatedPost = await db.updatePost(post?.postid!, {
+      text: "new text",
+    });
+    expect(updatedPost?.postid).toBe(post?.postid);
+    expect(updatedPost?.createdat).toEqual(post?.createdat);
+  });
+  // delete
+  // delete the post
+  it("should allow us to delete the post", async () => {
+    await db.deletePost(post?.postid!);
+    const deletedPost = await db.getPost(post?.postid!);
+    expect(deletedPost).toBeUndefined();
+  });
+  //  recreate the same post
+  it("should allow us to re create another post with the same info", async () => {
+    post = await db.createPost({ userid: user?.userid!, text: postCountent });
+    expect(post).toBeDefined();
+    expect(post?.text).toBe(postCountent);
+  });
+  // delete the user
+  it("should delete the post if we delete the user", async () => {
+    db.deleteUser(user?.userid!);
+    const deletedPost = await db.getPost(post?.postid!);
+    expect(deletedPost).toBeUndefined();
   });
 });

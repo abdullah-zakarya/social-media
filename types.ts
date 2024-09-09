@@ -16,9 +16,9 @@ export interface Follow {
 // 3) posts
 export interface Post {
   postid?: number;
-  createdAt?: number;
-  likeCount?: number;
-  commentCount?: number;
+  createdat?: number;
+  likecount?: number;
+  commentcount?: number;
   userid: number;
   text: string;
 }
