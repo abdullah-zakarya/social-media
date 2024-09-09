@@ -81,7 +81,7 @@ class Database implements DataModel {
         ON u.userID = f.followerID
       `;
     const result = await this.pool.query(query, [followeeID]);
-    return result.rows.length > 0 ? result.rows : [];
+    return result.rows.length ? result.rows : [];
   }
 
   async listFollowee(followerID: number): Promise<User[]> {
@@ -92,7 +92,7 @@ class Database implements DataModel {
         ON u.userID = f.followeeID
       `;
     const result = await this.pool.query(query, [followerID]);
-    return result.rows.length > 0 ? result.rows : [];
+    return result.rows.length ? result.rows : [];
   }
   // ================== Post Methods ==================
   async createPost(post: Post): Promise<Post | undefined> {
@@ -159,20 +159,12 @@ class Database implements DataModel {
     const values = Object.values(obj);
     const symbols = values.map((_, i) => `$${i + 1}`).join(", ");
     const query = `INSERT INTO ${table}s (${keys}) VALUES (${symbols}) RETURNING *`;
-
-    try {
-      console.log(query);
-      const result = await this.pool.query(query, values);
-      return result.rows[0];
-    } catch (error) {
-      console.error("Error executing query:", error);
-      throw error;
-    }
+    const result = await this.pool.query(query, values);
+    return result.rows[0];
   }
 
   private async deleteFactor(id: number, table: string): Promise<void> {
     const query = `DELETE FROM ${table}s WHERE ${table}ID = $1`;
-    console.log(query, id);
     await this.pool.query(query, [id]);
   }
 

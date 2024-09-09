@@ -1,35 +1,35 @@
 // 1) user
 export interface User {
-  userID?: number;
-  userName: string;
+  userid?: number;
+  username: string;
   password: string;
   email: string;
-  bio: string;
-  photo: string;
+  bio?: string;
+  photo?: string;
   name: string;
 }
 // 2) flows
 export interface Follow {
-  followerID: number;
-  followeeID: number;
+  followerid: number;
+  followeeid: number;
 }
 // 3) posts
 export interface Post {
-  postID?: number;
-  createdAt: number;
-  likeCount: number;
-  commentCount: number;
-  userID: number;
+  postid?: number;
+  createdAt?: number;
+  likeCount?: number;
+  commentCount?: number;
+  userid: number;
   text: string;
 }
 // 4) comments
 export interface Comment {
-  commentID?: number;
-  userID: number;
-  postID: number;
+  commentid?: number;
+  userid: number;
+  postid: number;
 }
 // 5) like
 export interface Like {
-  userID: number;
-  postID: number;
+  userid: number;
+  postid: number;
 }

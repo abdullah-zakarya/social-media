@@ -6,22 +6,22 @@
 
 ```pgsql
 CREATE TABLE users (
-userID VARCHAR(50) PRIMARY KEY,
-passWord VARCHAR(255) NOT NULL,
-email VARCHAR(100) UNIQUE NOT NULL,
-bio TEXT,
-photo VARCHAR(255),
-createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-name VARCHAR(100) NOT NULL );
+    userID SERIAL PRIMARY KEY,
+    userName VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    bio TEXT,
+    photo TEXT,
+    name VARCHAR(255) NOT NULL
+);
+
+
 ```
 
 <h2> 2 ) "create follows table" </h2>
 
 ```pgsql
-CREATE TABLE follows ( followerID VARCHAR(50),
-followeeID VARCHAR(50), PRIMARY KEY (followerID, followeeID),
-FOREIGN KEY (followerID) REFERENCES users(userID) ON DELETE CASCADE,
-FOREIGN KEY (followeeID) REFERENCES users(userID) ON DELETE CASCADE );
+
 ```
 
 <h2> 3 ) create posts table </h2>
