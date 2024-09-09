@@ -161,7 +161,6 @@ describe("Postsopration", () => {
   let user: User | undefined;
   let postCountent: string = "Hello, post";
 
-  // ==== initlize ======
   it("initlize", async () => {
     // 1) create user
     user = await db.createUser({
@@ -172,24 +171,18 @@ describe("Postsopration", () => {
     });
   });
 
-  //====== create =========
-  // 1 ) create right post
   it("should allow us to create post", async () => {
     post = await db.createPost({ userid: user?.userid!, text: postCountent });
     expect(post).toBeDefined();
     expect(post?.text).toBe(postCountent);
   });
-  // 2 ) create post with fake user
   it("should not allow  us create post with fake user", async () => {
     expect(db.createPost({ userid: -1, text: "fake" })).rejects.toThrow();
   });
-  // find
   it("should allow us to find the post", async () => {
     const findedPost = await db.getPost(post?.postid!);
     expect(findedPost).toStrictEqual(post);
   });
-  // update
-  // 1 ) update information
   it("should allow us to update the information", async () => {
     const updatedPost = await db.updatePost(post?.postid!, {
       text: "new text",
@@ -197,23 +190,129 @@ describe("Postsopration", () => {
     expect(updatedPost?.postid).toBe(post?.postid);
     expect(updatedPost?.createdat).toEqual(post?.createdat);
   });
-  // delete
-  // delete the post
   it("should allow us to delete the post", async () => {
     await db.deletePost(post?.postid!);
     const deletedPost = await db.getPost(post?.postid!);
     expect(deletedPost).toBeUndefined();
   });
-  //  recreate the same post
   it("should allow us to re create another post with the same info", async () => {
     post = await db.createPost({ userid: user?.userid!, text: postCountent });
     expect(post).toBeDefined();
     expect(post?.text).toBe(postCountent);
   });
-  // delete the user
   it("should delete the post if we delete the user", async () => {
     db.deleteUser(user?.userid!);
     const deletedPost = await db.getPost(post?.postid!);
     expect(deletedPost).toBeUndefined();
+  });
+});
+
+describe("comment opration", () => {
+  // intit variable
+  let post: Post | undefined;
+  let user1: User | undefined;
+  let user2: User | undefined;
+  let commentCountent: string = "I love you❤️❤️";
+  let udatedComment: string = "I realy hate you ☠️";
+  let comment: Comment | undefined;
+
+  it("initlize", async () => {
+    user1 = await db.createUser({
+      username: "A",
+      password: "A",
+      email: "A",
+      name: "A",
+    });
+    user2 = await db.createUser({
+      username: "B",
+      password: "B",
+      email: "B",
+      name: "B",
+    });
+    post = await db.createPost({
+      userid: user1?.userid!,
+      text: "my frist Post",
+    });
+  });
+
+  it("should allow us to create comment on post", async () => {
+    comment = await db.createComment({
+      userid: user2?.userid!,
+      postid: post?.postid!,
+      text: commentCountent,
+    });
+    expect(comment).toBeDefined();
+  });
+
+  it("should not allow us to create comment on fake post", async () => {
+    const fake = {
+      userid: user2?.userid!,
+      postid: -1,
+      text: commentCountent,
+    };
+    expect(db.createComment(fake)).rejects.toThrow();
+  });
+
+  it("should not allow us to create comment by fake user", async () => {
+    const fake = {
+      userid: -1,
+      postid: post?.postid!,
+      text: commentCountent,
+    };
+    expect(db.createComment(fake)).rejects.toThrow();
+  });
+
+  it("should allow us to get the comment", async () => {
+    const findedComment = await db.getComment(comment?.commentid!);
+    expect(findedComment).toStrictEqual(comment);
+  });
+
+  it("should allow us to get all comment of post ", async () => {
+    const commentList = await db.listComments(post?.postid!);
+    expect(commentList).toStrictEqual([comment]);
+  });
+
+  it("should allow us to update the comment", async () => {
+    const updated = await db.updateComment(comment?.commentid!, {
+      text: udatedComment,
+    });
+    const finded = await db.getComment(comment?.commentid!);
+    expect(finded).toStrictEqual(updated);
+  });
+
+  it("should allow us to delete the comment", async () => {
+    await db.deleteComment(comment?.commentid!);
+    const findedComment = await db.getComment(comment?.commentid!);
+    expect(findedComment).toBeUndefined();
+  });
+
+  it("rewrite the comment", async () => {
+    comment = await db.createComment({
+      userid: user2?.userid!,
+      postid: post?.postid!,
+      text: commentCountent,
+    });
+    expect(comment).toBeDefined();
+  });
+
+  it("should delete the comment if we deleted the post", async () => {
+    db.deletePost(post?.postid!);
+    const findedComment = await db.getComment(comment?.commentid!);
+    expect(findedComment).toBeUndefined();
+  });
+  it("rewrite the post", async () => {
+    post = await db.createPost({
+      userid: user1?.userid!,
+      text: "my frist Post",
+    });
+  });
+  it("should delete the comment if we deleted the users", async () => {
+    await db.deleteUser(user2?.userid!);
+    const findedComment = await db.getComment(comment?.commentid!);
+    expect(findedComment).toBeUndefined();
+  });
+  afterAll(async () => {
+    await db.deleteUser(user1?.userid!);
+    await db.end();
   });
 });

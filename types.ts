@@ -27,6 +27,7 @@ export interface Comment {
   commentid?: number;
   userid: number;
   postid: number;
+  text: string;
 }
 // 5) like
 export interface Like {
